@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
 from services.database import ping_db, db
-from services import social
+from services import social, users
 from pydantic import BaseModel
 import os
 
@@ -74,3 +74,14 @@ async def unfollow(data: FollowUser):
 async def get_following(user_id: str):
     following = await social.get_following(db, user_id)
     return {"following": following}
+
+@app.get("/users/{username}/skills")
+async def get_skills(username: str):
+    skills = await users.get_user_skills(db, username)
+    return {"skills": skills}
+
+@app.post("/sync-user")
+async def sync_user(data: dict):
+    skills = await users.sync_github_user(db, data["token"], data["username"])
+    return {"skills": skills}
+

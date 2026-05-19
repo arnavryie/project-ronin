@@ -1,5 +1,6 @@
 import React from 'react';
 import { getReposByTopic } from '@/lib/github-api';
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 import RepoCard from '@/components/feed/RepoCard';
 import DependencyGraph from '@/components/communities/DependencyGraph';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -27,6 +28,22 @@ export default async function CommunitySlugPage({ params }: { params: Promise<{ 
     repos = await getReposByTopic(community.topic);
   } catch (e) {
     repos = [];
+  }
+
+  const session = await auth();
+  let userSkills: string[] = [];
+
+  if (session?.user?.name) {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${apiUrl}/users/${session.user.name}/skills`, { next: { revalidate: 300 } });
+      if (res.ok) {
+        const data = await res.json();
+        userSkills = data.skills || [];
+      }
+    } catch (e) {
+      console.error("Failed to fetch user skills", e);
+    }
   }
 
   return (
@@ -90,7 +107,7 @@ export default async function CommunitySlugPage({ params }: { params: Promise<{ 
               </div>
             ) : (
               repos.map(repo => (
-                <RepoCard key={repo.id} repo={repo} />
+                <RepoCard key={repo.id} repo={repo} userSkills={userSkills} />
               ))
             )}
           </TabsContent>

@@ -24,10 +24,21 @@ export interface Repo {
 
 interface RepoCardProps {
   repo: Repo;
+  userSkills?: string[];
 }
 
-export default function RepoCard({ repo }: RepoCardProps) {
+export default function RepoCard({ repo, userSkills = [] }: RepoCardProps) {
   const isForkSpike = repo.forkVelocity > 200;
+  
+  const repoTechStack = [...(repo.topics || []), repo.language?.toLowerCase() || ""];
+  const matchedSkills = userSkills.filter(skill =>
+    repoTechStack.some(tech =>
+      tech.toLowerCase().includes(skill.toLowerCase()) ||
+      skill.toLowerCase().includes(tech.toLowerCase())
+    )
+  );
+  const skillMatch = repo.skillMatch > 0 ? repo.skillMatch : matchedSkills.length;
+
 
   return (
     <div className="flex flex-col gap-3 p-4 bg-gh-surface border border-gh-border rounded-md hover:border-gh-blue transition-colors">
@@ -115,7 +126,7 @@ export default function RepoCard({ repo }: RepoCardProps) {
       </div>
 
       {/* Skill Match Banner */}
-      {repo.skillMatch > 0 && (
+      {skillMatch > 0 && (
         <div 
           className="mt-2 text-xs flex items-center gap-2 border rounded-md px-3 py-2 text-purple-400 select-none animate-pulse"
           style={{
@@ -124,7 +135,7 @@ export default function RepoCard({ repo }: RepoCardProps) {
           }}
         >
           <span className="text-base leading-none">✦</span>
-          <span>{repo.skillMatch} of your skills match open issues in this repo</span>
+          <span>{skillMatch} of your skills match open issues in this repo</span>
         </div>
       )}
     </div>

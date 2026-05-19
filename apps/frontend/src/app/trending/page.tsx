@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame } from 'lucide-react';
 import RepoCard from '@/components/feed/RepoCard';
 import { getTrendingRepos } from '@/lib/github-api';
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 
 const LANGUAGES = ["", "Python", "TypeScript", "JavaScript", "Rust", "Go", "Java", "C++"];
 const PERIODS = ["daily", "weekly", "monthly"] as const;
@@ -20,6 +21,22 @@ export default async function TrendingPage({
     repos = await getTrendingRepos(language || undefined, period);
   } catch (e) {
     repos = [];
+  }
+
+  const session = await auth();
+  let userSkills: string[] = [];
+
+  if (session?.user?.name) {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const res = await fetch(`${apiUrl}/users/${session.user.name}/skills`, { next: { revalidate: 300 } });
+      if (res.ok) {
+        const data = await res.json();
+        userSkills = data.skills || [];
+      }
+    } catch (e) {
+      console.error("Failed to fetch user skills", e);
+    }
   }
 
   return (
@@ -69,7 +86,7 @@ export default async function TrendingPage({
               <div className="absolute -left-3 -top-3 z-10 w-7 h-7 bg-gh-surface border border-gh-border rounded-full flex items-center justify-center font-bold text-xs select-none">
                 #{idx + 1}
               </div>
-              <RepoCard repo={repo} />
+              <RepoCard repo={repo} userSkills={userSkills} />
             </div>
           ))
         )}

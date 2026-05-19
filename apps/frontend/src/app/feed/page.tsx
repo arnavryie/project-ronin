@@ -6,6 +6,7 @@ import RightSidebar from '@/components/layout/RightSidebar';
 import { getTrendingRepos } from '@/lib/github-api';
 import { SocialFeed } from '@/components/feed/SocialFeed';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function FeedPage() {
   let repos: any[] = [];
@@ -13,6 +14,34 @@ export default async function FeedPage() {
     repos = await getTrendingRepos(undefined, "weekly");
   } catch (e) {
     repos = [];
+  }
+
+  const session = await auth();
+  let userSkills: string[] = [];
+
+  if (session?.user?.name) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    try {
+      const res = await fetch(`${apiUrl}/users/${session.user.name}/skills`, { next: { revalidate: 300 } });
+      if (res.ok) {
+        const data = await res.json();
+        userSkills = data.skills || [];
+        
+        if (userSkills.length === 0 && (session as any).githubAccessToken) {
+          const syncRes = await fetch(`${apiUrl}/sync-user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: (session as any).githubAccessToken, username: session.user.name })
+          });
+          if (syncRes.ok) {
+            const syncData = await syncRes.json();
+            userSkills = syncData.skills || [];
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch/sync user skills", e);
+    }
   }
 
   return (
@@ -62,7 +91,7 @@ export default async function FeedPage() {
                     {showSpikeBefore && (
                       <ForkSpikeCard repoName={`${repo.owner}/${repo.name}`} forkVelocity={repo.forkVelocity} />
                     )}
-                    <RepoCard repo={repo} />
+                    <RepoCard repo={repo} userSkills={userSkills} />
                   </React.Fragment>
                 );
               })
