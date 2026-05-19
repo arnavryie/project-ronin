@@ -1,15 +1,23 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
-import { mockRepos, mockDevelopers } from '@/lib/mock-data';
+import { getTrendingRepos } from '@/lib/github-api';
 import LanguageDot from '../shared/LanguageDot';
 import { formatNumber } from '@/lib/utils';
 
-export default function RightSidebar() {
-  const trendingRepos = mockRepos.slice(0, 5);
-  const suggestedDevs = mockDevelopers.slice(0, 3);
+const SUGGESTED_DEVS = [
+  { username: "gvanrossum",  displayName: "Guido van Rossum", bio: "Python's creator. Currently at Microsoft." },
+  { username: "tiangolo",   displayName: "Sebastián Ramírez", bio: "Creator of FastAPI, Typer, SQLModel." },
+  { username: "sindresorhus", displayName: "Sindre Sorhus",  bio: "Full-time open source. 1000+ npm packages." },
+];
+
+export default async function RightSidebar() {
+  let trendingRepos: any[] = [];
+  try {
+    trendingRepos = (await getTrendingRepos(undefined, "weekly")).slice(0, 5);
+  } catch {
+    trendingRepos = [];
+  }
 
   return (
     <aside className="w-[296px] shrink-0 hidden lg:flex flex-col gap-6 pl-4 border-l border-gh-border h-[calc(100vh-56px)] overflow-y-auto pb-6">
@@ -19,7 +27,7 @@ export default function RightSidebar() {
         <div className="flex flex-col gap-3">
           {trendingRepos.map((repo) => (
             <div key={repo.id} className="flex flex-col gap-1">
-              <Link 
+              <Link
                 href={`/repo/${repo.owner}/${repo.name}`}
                 className="text-sm text-gh-blue font-semibold hover:underline truncate"
               >
@@ -37,8 +45,11 @@ export default function RightSidebar() {
               </div>
             </div>
           ))}
+          {trendingRepos.length === 0 && (
+            <p className="text-xs text-gh-muted">Loading trending repos...</p>
+          )}
         </div>
-        <Link 
+        <Link
           href="/trending"
           className="text-xs text-gh-blue hover:underline font-medium mt-1 inline-block"
         >
@@ -52,19 +63,16 @@ export default function RightSidebar() {
       <div className="flex flex-col gap-3">
         <h3 className="text-sm font-semibold text-gh-muted select-none">Suggested developers</h3>
         <div className="flex flex-col gap-4">
-          {suggestedDevs.map((dev) => (
+          {SUGGESTED_DEVS.map((dev) => (
             <div key={dev.username} className="flex items-start justify-between gap-2">
               <div className="flex gap-2.5 overflow-hidden">
-                <img 
-                  src={dev.avatar}
+                <img
+                  src={`https://github.com/${dev.username}.png?size=36`}
                   alt={dev.displayName}
                   className="w-9 h-9 rounded-full border border-gh-border shrink-0 bg-gh-surface"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${dev.username}`;
-                  }}
                 />
                 <div className="flex flex-col overflow-hidden leading-tight">
-                  <Link 
+                  <Link
                     href={`/profile/${dev.username}`}
                     className="text-xs font-semibold text-white hover:underline hover:text-gh-blue truncate"
                   >
@@ -76,9 +84,12 @@ export default function RightSidebar() {
                   </p>
                 </div>
               </div>
-              <button className="shrink-0 bg-[#21262d] border border-gh-border text-white text-xs px-2.5 py-1 rounded-md hover:bg-gh-surface2 hover:border-gh-muted transition-colors font-medium">
-                Follow
-              </button>
+              <Link
+                href={`/profile/${dev.username}`}
+                className="shrink-0 bg-[#21262d] border border-gh-border text-white text-xs px-2.5 py-1 rounded-md hover:bg-gh-surface2 hover:border-gh-muted transition-colors font-medium"
+              >
+                View
+              </Link>
             </div>
           ))}
         </div>

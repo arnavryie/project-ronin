@@ -1,9 +1,17 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { Award } from 'lucide-react';
-import { mockCommunities } from '@/lib/mock-data';
+
+const COMMUNITIES = [
+  { slug: "ai-ml", name: "AI & Machine Learning", icon: "🤖", description: "LLMs, neural networks, AI tools and frameworks", color: "#58a6ff", github_topic: "machine-learning" },
+  { slug: "ui-frontend", name: "UI & Frontend", icon: "⚛️", description: "React, Vue, Svelte, CSS frameworks, design systems", color: "#8957e5", github_topic: "react" },
+  { slug: "devops", name: "DevOps & Infrastructure", icon: "⚙️", description: "Docker, Kubernetes, CI/CD, cloud-native tools", color: "#238636", github_topic: "kubernetes" },
+  { slug: "databases", name: "Databases", icon: "🗄️", description: "SQL, NoSQL, vector databases, ORMs", color: "#d76027", github_topic: "database" },
+  { slug: "systems", name: "Systems & Rust", icon: "⚡", description: "Systems programming, performance engineering", color: "#dea584", github_topic: "rust" },
+  { slug: "python", name: "Python", icon: "🐍", description: "Python libraries, frameworks, and tools", color: "#3572A5", github_topic: "python" },
+  { slug: "web3", name: "Web3 & Blockchain", icon: "⛓️", description: "DeFi, smart contracts, crypto protocols", color: "#f1e05a", github_topic: "blockchain" },
+  { slug: "mobile", name: "Mobile Dev", icon: "📱", description: "iOS, Android, Flutter, React Native", color: "#00B4AB", github_topic: "flutter" },
+];
 
 export default function CommunitiesPage() {
   return (
@@ -13,21 +21,22 @@ export default function CommunitiesPage() {
           <Award className="w-5 h-5 text-gh-blue" />
           <span>Explore Communities</span>
         </h2>
-        <p className="text-xs text-gh-muted mt-1">Connect with developers working in specialized technical domains.</p>
+        <p className="text-xs text-gh-muted mt-1">Connect with developers working in specialized technical domains. Real repos pulled from GitHub topics.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {mockCommunities.map((comm) => (
-          <div 
-            key={comm.slug} 
+        {COMMUNITIES.map((comm) => (
+          <div
+            key={comm.slug}
             className="p-5 bg-gh-surface border border-gh-border rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4"
+            style={{ borderLeftColor: comm.color, borderLeftWidth: 3 }}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="text-3xl p-2 rounded-md bg-gh-bg border border-gh-border select-none">{comm.icon}</span>
                 <div className="flex flex-col leading-tight">
-                  <Link 
-                    href={`/communities/${comm.slug}`} 
+                  <Link
+                    href={`/communities/${comm.slug}`}
                     className="text-base font-bold text-white hover:underline hover:text-gh-blue"
                   >
                     {comm.name}
@@ -35,10 +44,10 @@ export default function CommunitiesPage() {
                   <span className="text-xs text-gh-muted mt-0.5">/c/{comm.slug}</span>
                 </div>
               </div>
-              
-              <Link 
+
+              <Link
                 href={`/communities/${comm.slug}`}
-                className="gh-btn-secondary py-1.5 px-3 text-xs font-semibold"
+                className="gh-btn-secondary py-1.5 px-3 text-xs font-semibold shrink-0"
               >
                 Enter
               </Link>
@@ -48,13 +57,11 @@ export default function CommunitiesPage() {
               {comm.description}
             </p>
 
-            <div className="flex items-center gap-5 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto select-none">
-              <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-white">{comm.members.toLocaleString()}</span> members
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-white">{comm.repos}</span> repositories
-              </div>
+            <div className="flex items-center gap-2 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto">
+              <span className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono" style={{ color: comm.color }}>
+                #{comm.github_topic}
+              </span>
+              <span>GitHub topic</span>
             </div>
           </div>
         ))}

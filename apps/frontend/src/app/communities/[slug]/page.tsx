@@ -1,45 +1,52 @@
-'use client';
-
 import React from 'react';
-import { useParams } from 'next/navigation';
-import { mockCommunities, mockRepos } from '@/lib/mock-data';
-import DependencyGraph from '@/components/communities/DependencyGraph';
+import { getReposByTopic } from '@/lib/github-api';
 import RepoCard from '@/components/feed/RepoCard';
+import DependencyGraph from '@/components/communities/DependencyGraph';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Compass, MessageSquare, ShieldAlert } from 'lucide-react';
 
-export default function CommunitySlugPage() {
-  const params = useParams();
-  const slug = params.slug as string;
+const COMMUNITY_MAP: Record<string, { name: string; icon: string; description: string; topic: string; color: string }> = {
+  "ai-ml":       { name: "AI & Machine Learning", icon: "🤖", description: "LLMs, neural networks, AI tools and frameworks", topic: "machine-learning", color: "#58a6ff" },
+  "ui-frontend": { name: "UI & Frontend",          icon: "⚛️", description: "React, Vue, Svelte, CSS frameworks, design systems", topic: "react",  color: "#8957e5" },
+  "devops":      { name: "DevOps & Infrastructure",icon: "⚙️", description: "Docker, Kubernetes, CI/CD, cloud-native tools",        topic: "kubernetes", color: "#238636" },
+  "databases":   { name: "Databases",              icon: "🗄️", description: "SQL, NoSQL, vector databases, ORMs",                    topic: "database", color: "#d76027" },
+  "systems":     { name: "Systems & Rust",         icon: "⚡", description: "Systems programming, performance engineering",          topic: "rust", color: "#dea584" },
+  "python":      { name: "Python",                 icon: "🐍", description: "Python libraries, frameworks, and tools",               topic: "python", color: "#3572A5" },
+  "web3":        { name: "Web3 & Blockchain",      icon: "⛓️", description: "DeFi, smart contracts, crypto protocols",               topic: "blockchain", color: "#f1e05a" },
+  "mobile":      { name: "Mobile Dev",             icon: "📱", description: "iOS, Android, Flutter, React Native",                   topic: "flutter", color: "#00B4AB" },
+};
 
-  const community = mockCommunities.find(c => c.slug === slug) || mockCommunities[0];
+export default async function CommunitySlugPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const community = COMMUNITY_MAP[slug] || {
+    name: slug, icon: "⚡", description: `Repos tagged with #${slug}`, topic: slug, color: "#58a6ff",
+  };
 
-  const filteredRepos = mockRepos.filter(repo => {
-    if (slug === 'ai-ml') return repo.topics.includes('llm') || repo.topics.includes('ai');
-    if (slug === 'ui-frontend') return repo.topics.includes('react') || repo.topics.includes('nextjs');
-    if (slug === 'databases') return repo.topics.includes('mongodb');
-    return true;
-  });
+  let repos: any[] = [];
+  try {
+    repos = await getReposByTopic(community.topic);
+  } catch (e) {
+    repos = [];
+  }
 
   return (
     <div className="p-6 max-w-[1000px] mx-auto flex flex-col gap-6">
       {/* Header card */}
-      <div className="p-5 bg-gh-surface border border-gh-border rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        className="p-5 bg-gh-surface border border-gh-border rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style={{ borderLeftColor: community.color, borderLeftWidth: 3 }}
+      >
         <div className="flex gap-4 items-center">
           <span className="text-4xl p-2.5 rounded-md bg-gh-bg border border-gh-border select-none">{community.icon}</span>
           <div className="flex flex-col leading-tight">
             <h2 className="text-xl font-bold text-white tracking-tight">{community.name}</h2>
-            <span className="text-xs text-gh-muted mt-1">/c/{community.slug}</span>
+            <span className="text-xs text-gh-muted mt-1">/c/{slug} · #{community.topic} on GitHub</span>
           </div>
         </div>
 
         <div className="flex items-center gap-4 text-xs text-gh-muted select-none">
           <div className="text-center bg-gh-bg px-3 py-1.5 rounded border border-gh-border">
-            <span className="font-semibold text-white block text-sm">{community.members.toLocaleString()}</span>
-            <span>Members</span>
-          </div>
-          <div className="text-center bg-gh-bg px-3 py-1.5 rounded border border-gh-border">
-            <span className="font-semibold text-white block text-sm">{community.repos}</span>
+            <span className="font-semibold text-white block text-sm">{repos.length}+</span>
             <span>Repos</span>
           </div>
         </div>
@@ -52,21 +59,21 @@ export default function CommunitySlugPage() {
       {/* Tabs */}
       <Tabs defaultValue="repos" className="w-full">
         <TabsList className="bg-[#161b22] border border-gh-border p-0.5 rounded-md flex self-start gap-1 select-none">
-          <TabsTrigger 
+          <TabsTrigger
             value="repos"
             className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>Repositories ({filteredRepos.length})</span>
+            <span>Repositories ({repos.length})</span>
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="graph"
             className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
           >
             <ShieldAlert className="w-3.5 h-3.5" />
             <span>Dependency Graph</span>
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="discussions"
             className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
           >
@@ -77,13 +84,14 @@ export default function CommunitySlugPage() {
 
         <div className="mt-4">
           <TabsContent value="repos" className="flex flex-col gap-4">
-            {filteredRepos.map(repo => (
-              <RepoCard key={repo.id} repo={repo} />
-            ))}
-            {filteredRepos.length === 0 && (
+            {repos.length === 0 ? (
               <div className="text-center py-12 border border-gh-border bg-gh-surface rounded-md">
-                <span className="text-gh-muted text-sm">No repositories added to this community yet.</span>
+                <span className="text-gh-muted text-sm">No repositories found for this community.</span>
               </div>
+            ) : (
+              repos.map(repo => (
+                <RepoCard key={repo.id} repo={repo} />
+              ))
             )}
           </TabsContent>
 
