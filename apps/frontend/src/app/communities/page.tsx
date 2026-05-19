@@ -2,18 +2,17 @@ import React from 'react';
 import Link from 'next/link';
 import { Award } from 'lucide-react';
 
-const COMMUNITIES = [
-  { slug: "ai-ml", name: "AI & Machine Learning", icon: "🤖", description: "LLMs, neural networks, AI tools and frameworks", color: "#58a6ff", github_topic: "machine-learning" },
-  { slug: "ui-frontend", name: "UI & Frontend", icon: "⚛️", description: "React, Vue, Svelte, CSS frameworks, design systems", color: "#8957e5", github_topic: "react" },
-  { slug: "devops", name: "DevOps & Infrastructure", icon: "⚙️", description: "Docker, Kubernetes, CI/CD, cloud-native tools", color: "#238636", github_topic: "kubernetes" },
-  { slug: "databases", name: "Databases", icon: "🗄️", description: "SQL, NoSQL, vector databases, ORMs", color: "#d76027", github_topic: "database" },
-  { slug: "systems", name: "Systems & Rust", icon: "⚡", description: "Systems programming, performance engineering", color: "#dea584", github_topic: "rust" },
-  { slug: "python", name: "Python", icon: "🐍", description: "Python libraries, frameworks, and tools", color: "#3572A5", github_topic: "python" },
-  { slug: "web3", name: "Web3 & Blockchain", icon: "⛓️", description: "DeFi, smart contracts, crypto protocols", color: "#f1e05a", github_topic: "blockchain" },
-  { slug: "mobile", name: "Mobile Dev", icon: "📱", description: "iOS, Android, Flutter, React Native", color: "#00B4AB", github_topic: "flutter" },
-];
+export default async function CommunitiesPage() {
+  let communities = [];
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/communities`, { next: { revalidate: 60 } });
+    if (res.ok) {
+      communities = await res.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch communities", e);
+  }
 
-export default function CommunitiesPage() {
   return (
     <div className="p-6 max-w-[1000px] mx-auto flex flex-col gap-6">
       <div className="border-b border-gh-border pb-4">
@@ -25,7 +24,7 @@ export default function CommunitiesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {COMMUNITIES.map((comm) => (
+        {communities.map((comm: any) => (
           <div
             key={comm.slug}
             className="p-5 bg-gh-surface border border-gh-border rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4"
@@ -57,11 +56,14 @@ export default function CommunitiesPage() {
               {comm.description}
             </p>
 
-            <div className="flex items-center gap-2 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto">
-              <span className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono" style={{ color: comm.color }}>
-                #{comm.github_topic}
-              </span>
-              <span>GitHub topic</span>
+            <div className="flex items-center gap-2 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto justify-between">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono" style={{ color: comm.color }}>
+                  #{comm.github_topic}
+                </span>
+                <span>GitHub topic</span>
+              </div>
+              <span className="font-semibold">{comm.member_count} members</span>
             </div>
           </div>
         ))}
