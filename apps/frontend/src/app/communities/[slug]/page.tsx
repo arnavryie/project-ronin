@@ -1,0 +1,120 @@
+'use client';
+
+import React from 'react';
+import { useParams } from 'next/navigation';
+import { mockCommunities, mockRepos } from '@/lib/mock-data';
+import DependencyGraph from '@/components/communities/DependencyGraph';
+import RepoCard from '@/components/feed/RepoCard';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Compass, MessageSquare, ShieldAlert } from 'lucide-react';
+
+export default function CommunitySlugPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const community = mockCommunities.find(c => c.slug === slug) || mockCommunities[0];
+
+  const filteredRepos = mockRepos.filter(repo => {
+    if (slug === 'ai-ml') return repo.topics.includes('llm') || repo.topics.includes('ai');
+    if (slug === 'ui-frontend') return repo.topics.includes('react') || repo.topics.includes('nextjs');
+    if (slug === 'databases') return repo.topics.includes('mongodb');
+    return true;
+  });
+
+  return (
+    <div className="p-6 max-w-[1000px] mx-auto flex flex-col gap-6">
+      {/* Header card */}
+      <div className="p-5 bg-gh-surface border border-gh-border rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex gap-4 items-center">
+          <span className="text-4xl p-2.5 rounded-md bg-gh-bg border border-gh-border select-none">{community.icon}</span>
+          <div className="flex flex-col leading-tight">
+            <h2 className="text-xl font-bold text-white tracking-tight">{community.name}</h2>
+            <span className="text-xs text-gh-muted mt-1">/c/{community.slug}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 text-xs text-gh-muted select-none">
+          <div className="text-center bg-gh-bg px-3 py-1.5 rounded border border-gh-border">
+            <span className="font-semibold text-white block text-sm">{community.members.toLocaleString()}</span>
+            <span>Members</span>
+          </div>
+          <div className="text-center bg-gh-bg px-3 py-1.5 rounded border border-gh-border">
+            <span className="font-semibold text-white block text-sm">{community.repos}</span>
+            <span>Repos</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-sm text-gh-muted leading-relaxed max-w-[800px] -mt-2">
+        {community.description}
+      </p>
+
+      {/* Tabs */}
+      <Tabs defaultValue="repos" className="w-full">
+        <TabsList className="bg-[#161b22] border border-gh-border p-0.5 rounded-md flex self-start gap-1 select-none">
+          <TabsTrigger 
+            value="repos"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Repositories ({filteredRepos.length})</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="graph"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>Dependency Graph</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="discussions"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Discussions</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <div className="mt-4">
+          <TabsContent value="repos" className="flex flex-col gap-4">
+            {filteredRepos.map(repo => (
+              <RepoCard key={repo.id} repo={repo} />
+            ))}
+            {filteredRepos.length === 0 && (
+              <div className="text-center py-12 border border-gh-border bg-gh-surface rounded-md">
+                <span className="text-gh-muted text-sm">No repositories added to this community yet.</span>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="graph">
+            <DependencyGraph />
+          </TabsContent>
+
+          <TabsContent value="discussions" className="flex flex-col gap-4">
+            <div className="p-4 bg-gh-surface border border-gh-border rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gh-blue">#general</span>
+                <span className="text-[10px] text-gh-muted">Updated 2 hours ago</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white mt-1">Which framework is best for streaming gRPC logs?</h4>
+              <p className="text-xs text-gh-muted mt-2">
+                "We are experiencing high resource consumption using standard HTTP long-polling. Anyone here implemented custom streaming adapters?"
+              </p>
+            </div>
+            <div className="p-4 bg-gh-surface border border-gh-border rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gh-blue">#announcements</span>
+                <span className="text-[10px] text-gh-muted">Updated yesterday</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white mt-1">Hackathon project registrations are open!</h4>
+              <p className="text-xs text-gh-muted mt-2">
+                "Form groups and register your repository for the social intelligence platform challenge. Top 3 projects receive funding."
+              </p>
+            </div>
+          </TabsContent>
+        </div>
+      </Tabs>
+    </div>
+  );
+}
