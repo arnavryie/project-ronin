@@ -6,10 +6,11 @@ interface ImpactBarProps {
 }
 
 export default function ImpactBar({ impactScore, impactLevel }: ImpactBarProps) {
+  const level = (impactLevel || 'Med').toLowerCase();
   let fillColor = '#8b949e';
-  if (impactLevel.toLowerCase() === 'high') {
+  if (level === 'high') {
     fillColor = '#238636';
-  } else if (impactLevel.toLowerCase() === 'med' || impactLevel.toLowerCase() === 'medium') {
+  } else if (level === 'med' || level === 'medium') {
     fillColor = '#d76027';
   }
 

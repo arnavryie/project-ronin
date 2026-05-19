@@ -1,7 +1,7 @@
 import React from 'react';
 import { getRepoDetail } from '@/lib/github-api';
 import IssueRow from '@/components/repo/IssueRow';
-import AIInsightPanel from '@/components/repo/AIInsightPanel';
+import { AIInsightPanel } from '@/components/repo/AIInsightPanel';
 import SkillBadge from '@/components/shared/SkillBadge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Star, GitFork, Play, ExternalLink } from 'lucide-react';

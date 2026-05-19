@@ -37,7 +37,7 @@ export default function RepoCard({ repo, userSkills = [] }: RepoCardProps) {
       skill.toLowerCase().includes(tech.toLowerCase())
     )
   );
-  const skillMatch = repo.skillMatch > 0 ? repo.skillMatch : matchedSkills.length;
+  const skillMatch = (repo.skillMatch ?? 0) > 0 ? repo.skillMatch : matchedSkills.length;
 
 
   return (

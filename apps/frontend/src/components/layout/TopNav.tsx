@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Bell, Plus, Search } from 'lucide-react';
+import { Bell, Plus, Search, LogIn, LogOut } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { mockUser } from '@/lib/mock-data';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function TopNav() {
   const [search, setSearch] = useState('');
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -20,6 +21,10 @@ export default function TopNav() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  const username = (session?.user as any)?.login || session?.user?.name?.toLowerCase().replace(/\s+/g, '') || 'arnavryie';
+  const avatar = session?.user?.image || `https://github.com/${username}.png`;
+  const displayName = session?.user?.name || username;
 
   return (
     <header className="fixed top-0 left-0 right-0 h-14 bg-gh-surface border-b border-gh-border px-4 flex items-center justify-between z-50">
@@ -54,16 +59,35 @@ export default function TopNav() {
         <button className="p-1.5 text-gh-muted hover:text-gh-text hover:bg-gh-surface2 rounded-md transition-colors" title="Create New">
           <Plus className="w-4 h-4" />
         </button>
-        <Link href={`/profile/${mockUser.username}`} className="ml-2 group shrink-0" title={`@${mockUser.username}`}>
-          <img 
-            src={mockUser.avatar}
-            alt={mockUser.displayName}
-            className="w-8 h-8 rounded-full border border-gh-border hover:border-gh-blue transition-colors bg-gh-surface2"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${mockUser.username}`;
-            }}
-          />
-        </Link>
+
+        {status === 'loading' ? (
+          <div className="ml-2 w-8 h-8 rounded-full bg-gh-surface2 animate-pulse" />
+        ) : session ? (
+          <div className="flex items-center gap-2 ml-2">
+            <Link href={`/profile/${username}`} className="group shrink-0" title={`@${username}`}>
+              <img 
+                src={avatar}
+                alt={displayName}
+                className="w-8 h-8 rounded-full border border-gh-border hover:border-gh-blue transition-colors bg-gh-surface2"
+              />
+            </Link>
+            <button
+              onClick={() => signOut()}
+              title="Sign out"
+              className="p-1.5 text-gh-muted hover:text-red-400 hover:bg-gh-surface2 rounded-md transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => signIn('github')}
+            className="ml-2 flex items-center gap-1.5 gh-btn-primary py-1.5 px-3 text-xs font-semibold"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            Sign in
+          </button>
+        )}
       </div>
     </header>
   );

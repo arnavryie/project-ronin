@@ -145,6 +145,7 @@ export async function getRepoDetail(owner: string, name: string, token?: string)
         openedAt: timeAgo(issue.created_at),
         htmlUrl: issue.html_url,
         impactScore: 50,
+        impactLevel: 'Med',
         skillMatch: 0,
       })),
   }
