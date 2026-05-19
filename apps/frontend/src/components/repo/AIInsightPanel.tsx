@@ -23,8 +23,7 @@ export function AIInsightPanel({ repoFullName, description, language, topics }: 
 
   return (
     <div
-      className="rounded-md p-4 mb-4"
-      style={{ border: "1px solid rgba(137,87,229,0.4)", boxShadow: "0 0 0 1px rgba(137,87,229,0.1)" }}
+      className="rounded-md p-4 mb-4 border border-gh-purple/40 shadow-[0_0_0_1px_rgba(137,87,229,0.1)]"
     >
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[#8957e5] text-sm leading-none">✦</span>

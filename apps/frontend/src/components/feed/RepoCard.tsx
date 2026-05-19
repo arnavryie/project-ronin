@@ -128,11 +128,7 @@ export default function RepoCard({ repo, userSkills = [] }: RepoCardProps) {
       {/* Skill Match Banner */}
       {skillMatch > 0 && (
         <div 
-          className="mt-2 text-xs flex items-center gap-2 border rounded-md px-3 py-2 text-purple-400 select-none animate-pulse"
-          style={{
-            background: 'rgba(137, 87, 229, 0.15)',
-            borderColor: '#8957e5',
-          }}
+          className="mt-2 text-xs flex items-center gap-2 border border-gh-purple bg-gh-purple/15 rounded-md px-3 py-2 text-purple-400 select-none animate-pulse"
         >
           <span className="text-base leading-none">✦</span>
           <span>{skillMatch} of your skills match open issues in this repo</span>

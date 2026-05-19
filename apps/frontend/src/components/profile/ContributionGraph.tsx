@@ -14,12 +14,12 @@ export default function ContributionGraph() {
 
   const getColorClass = (level: number) => {
     switch (level) {
-      case 0: return '#161b22';
-      case 1: return '#0e4429';
-      case 2: return '#006d32';
-      case 3: return '#26a641';
-      case 4: return '#39d353';
-      default: return '#161b22';
+      case 0: return 'bg-[#161b22]';
+      case 1: return 'bg-[#0e4429]';
+      case 2: return 'bg-[#006d32]';
+      case 3: return 'bg-[#26a641]';
+      case 4: return 'bg-[#39d353]';
+      default: return 'bg-[#161b22]';
     }
   };
 
@@ -35,8 +35,7 @@ export default function ContributionGraph() {
             {days.map((level, idx) => (
               <div 
                 key={idx}
-                className="w-[10px] h-[10px] rounded-[1.5px] transition-all hover:scale-125 hover:z-10 cursor-pointer"
-                style={{ backgroundColor: getColorClass(level) }}
+                className={`w-[10px] h-[10px] rounded-[1.5px] transition-all hover:scale-125 hover:z-10 cursor-pointer ${getColorClass(level)}`}
                 title={`Level ${level} activity`}
               />
             ))}
@@ -48,11 +47,11 @@ export default function ContributionGraph() {
         <a href="#" className="hover:text-gh-blue hover:underline">Learn how we count contributions</a>
         <div className="flex items-center gap-1 select-none">
           <span>Less</span>
-          <span className="w-2.5 h-2.5 rounded-[1px]" style={{ backgroundColor: '#161b22' }} />
-          <span className="w-2.5 h-2.5 rounded-[1px]" style={{ backgroundColor: '#0e4429' }} />
-          <span className="w-2.5 h-2.5 rounded-[1px]" style={{ backgroundColor: '#006d32' }} />
-          <span className="w-2.5 h-2.5 rounded-[1px]" style={{ backgroundColor: '#26a641' }} />
-          <span className="w-2.5 h-2.5 rounded-[1px]" style={{ backgroundColor: '#39d353' }} />
+          <span className="w-2.5 h-2.5 rounded-[1px] bg-[#161b22]" />
+          <span className="w-2.5 h-2.5 rounded-[1px] bg-[#0e4429]" />
+          <span className="w-2.5 h-2.5 rounded-[1px] bg-[#006d32]" />
+          <span className="w-2.5 h-2.5 rounded-[1px] bg-[#26a641]" />
+          <span className="w-2.5 h-2.5 rounded-[1px] bg-[#39d353]" />
           <span>More</span>
         </div>
       </div>

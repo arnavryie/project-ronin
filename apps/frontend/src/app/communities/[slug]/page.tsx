@@ -50,8 +50,8 @@ export default async function CommunitySlugPage({ params }: { params: Promise<{ 
     <div className="p-6 max-w-[1000px] mx-auto flex flex-col gap-6">
       {/* Header card */}
       <div
-        className="p-5 bg-gh-surface border border-gh-border rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-        style={{ borderLeftColor: community.color, borderLeftWidth: 3 }}
+        className="p-5 bg-gh-surface border border-gh-border border-l-[3px] border-l-[var(--comm-color)] rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style={{ '--comm-color': community.color } as React.CSSProperties}
       >
         <div className="flex gap-4 items-center">
           <span className="text-4xl p-2.5 rounded-md bg-gh-bg border border-gh-border select-none">{community.icon}</span>

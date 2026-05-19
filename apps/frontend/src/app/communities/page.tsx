@@ -27,8 +27,8 @@ export default async function CommunitiesPage() {
         {communities.map((comm: any) => (
           <div
             key={comm.slug}
-            className="p-5 bg-gh-surface border border-gh-border rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4"
-            style={{ borderLeftColor: comm.color, borderLeftWidth: 3 }}
+            className="p-5 bg-gh-surface border border-gh-border border-l-[3px] border-l-[var(--comm-color)] rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4"
+            style={{ '--comm-color': comm.color } as React.CSSProperties}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -58,7 +58,10 @@ export default async function CommunitiesPage() {
 
             <div className="flex items-center gap-2 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto justify-between">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono" style={{ color: comm.color }}>
+                <span 
+                  className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono text-[var(--comm-color)]" 
+                  style={{ '--comm-color': comm.color } as React.CSSProperties}
+                >
                   #{comm.github_topic}
                 </span>
                 <span>GitHub topic</span>
