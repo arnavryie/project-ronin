@@ -4,6 +4,8 @@ import RepoCard from '@/components/feed/RepoCard';
 import ForkSpikeCard from '@/components/feed/ForkSpikeCard';
 import RightSidebar from '@/components/layout/RightSidebar';
 import { getTrendingRepos } from '@/lib/github-api';
+import { SocialFeed } from '@/components/feed/SocialFeed';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export default async function FeedPage() {
   let repos: any[] = [];
@@ -26,26 +28,47 @@ export default async function FeedPage() {
           </button>
         </div>
 
-        {/* Feed content */}
-        <div className="flex flex-col gap-4">
-          {repos.length === 0 ? (
-            <div className="text-center py-12 border border-gh-border bg-gh-surface rounded-md">
-              <span className="text-gh-muted text-sm">No repositories found. Check your connection.</span>
-            </div>
-          ) : (
-            repos.map((repo, idx) => {
-              const showSpikeBefore = repo.forkVelocity > 200 && idx === 0;
-              return (
-                <React.Fragment key={repo.id}>
-                  {showSpikeBefore && (
-                    <ForkSpikeCard repoName={`${repo.owner}/${repo.name}`} forkVelocity={repo.forkVelocity} />
-                  )}
-                  <RepoCard repo={repo} />
-                </React.Fragment>
-              );
-            })
-          )}
-        </div>
+        {/* Feed content via Tabs */}
+        <Tabs defaultValue="feed" className="w-full flex flex-col gap-4">
+          <TabsList className="bg-[#161b22] border border-gh-border p-0.5 rounded-md flex self-start gap-1 select-none">
+            <TabsTrigger 
+              value="feed"
+              className="px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
+            >
+              Social Feed
+            </TabsTrigger>
+            <TabsTrigger 
+              value="trending"
+              className="px-4 py-1.5 text-xs text-gh-muted data-[state=active]:bg-gh-surface2 data-[state=active]:text-white rounded-md font-medium cursor-pointer"
+            >
+              Trending
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="feed" className="mt-0 outline-none border-none">
+            <SocialFeed />
+          </TabsContent>
+
+          <TabsContent value="trending" className="mt-0 outline-none border-none flex flex-col gap-4">
+            {repos.length === 0 ? (
+              <div className="text-center py-12 border border-gh-border bg-gh-surface rounded-md">
+                <span className="text-gh-muted text-sm">No repositories found. Check your connection.</span>
+              </div>
+            ) : (
+              repos.map((repo, idx) => {
+                const showSpikeBefore = repo.forkVelocity > 200 && idx === 0;
+                return (
+                  <React.Fragment key={repo.id}>
+                    {showSpikeBefore && (
+                      <ForkSpikeCard repoName={`${repo.owner}/${repo.name}`} forkVelocity={repo.forkVelocity} />
+                    )}
+                    <RepoCard repo={repo} />
+                  </React.Fragment>
+                );
+              })
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Right Sidebar explore column */}

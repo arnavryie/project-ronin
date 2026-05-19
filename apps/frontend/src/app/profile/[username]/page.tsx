@@ -6,6 +6,7 @@ import LanguageDot from '@/components/shared/LanguageDot';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Users, MapPin, Star, BookOpen, BrainCircuit, Globe, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { FollowButton } from '@/components/profile/FollowButton';
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -64,6 +65,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           {user.bio && (
             <p className="text-sm text-gh-text mt-1 leading-relaxed">{user.bio}</p>
           )}
+          
+          <FollowButton targetUserId={user.username} targetUsername={user.username} />
 
           <div className="flex items-center gap-2.5 text-xs text-gh-muted select-none">
             <div className="flex items-center gap-1 hover:text-gh-blue cursor-pointer">

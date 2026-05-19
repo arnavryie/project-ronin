@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import TopNav from "@/components/layout/TopNav";
 import Sidebar from "@/components/layout/Sidebar";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -27,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-gh-bg text-gh-text min-h-screen flex flex-col`}>
-        <TopNav />
-        <div className="flex flex-1 pt-14 pl-16 md:pl-[240px]">
-          <Sidebar />
-          <main className="flex-1 min-h-[calc(100vh-56px)] bg-gh-bg">
-            {children}
-          </main>
-        </div>
+        <AuthProvider>
+          <TopNav />
+          <div className="flex flex-1 pt-14 pl-16 md:pl-[240px]">
+            <Sidebar />
+            <main className="flex-1 min-h-[calc(100vh-56px)] bg-gh-bg">
+              {children}
+            </main>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
