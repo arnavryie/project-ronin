@@ -1,52 +1,48 @@
-import React from 'react';
-import { Sparkles, TrendingUp, AlertTriangle, Cpu } from 'lucide-react';
+"use client"
+import { useEffect, useState } from "react"
 
-export default function AIInsightPanel() {
+interface AIInsightPanelProps {
+  repoFullName: string
+  description: string
+  language: string
+  topics: string[]
+}
+
+export function AIInsightPanel({ repoFullName, description, language, topics }: AIInsightPanelProps) {
+  const [summary, setSummary] = useState<string>("")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const params = new URLSearchParams({ repo: repoFullName, description, language, topics: topics.join(",") })
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/repo-summary?${params}`)
+      .then(r => r.json())
+      .then(d => setSummary(d.summary))
+      .catch(() => setSummary("Unable to generate summary."))
+      .finally(() => setLoading(false))
+  }, [repoFullName, description, language, topics])
+
   return (
-    <div className="p-[1px] rounded-md bg-gradient-to-r from-gh-purple to-gh-blue select-none">
-      <div className="bg-[#0d1117] p-5 rounded-[5px] flex flex-col gap-4">
-        {/* Header */}
-        <div className="flex items-center gap-2 border-b border-gh-border/60 pb-3">
-          <Sparkles className="w-5 h-5 text-gh-purple animate-pulse" />
-          <h3 className="text-sm font-bold text-white tracking-tight">AI Insights & Recommendations</h3>
-        </div>
-
-        {/* Bullet Points */}
-        <div className="flex flex-col gap-4">
-          {/* Insight 1 */}
-          <div className="flex gap-3">
-            <TrendingUp className="w-4 h-4 text-gh-orange shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-white">Abnormal Fork Spike (340%)</span>
-              <p className="text-[11px] text-gh-muted leading-relaxed">
-                LangChain has experienced a massive influx of forks in the last 24h. This corresponds to the release of their new streaming agent architecture. Developers are racing to integrate standard wrappers.
-              </p>
-            </div>
-          </div>
-
-          {/* Insight 2 */}
-          <div className="flex gap-3">
-            <AlertTriangle className="w-4 h-4 text-gh-red shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-white">Potential Dependency Drift</span>
-              <p className="text-[11px] text-gh-muted leading-relaxed">
-                Our analysis shows a drift in `pydantic` package bindings between standard `fastapi` setups and LangChain schema structures, creating possible type safety incompatibilities.
-              </p>
-            </div>
-          </div>
-
-          {/* Insight 3 */}
-          <div className="flex gap-3">
-            <Cpu className="w-4 h-4 text-gh-blue shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-semibold text-white">Recommended Action</span>
-              <p className="text-[11px] text-gh-muted leading-relaxed">
-                Assign **Arnav Tagade** to issue **#142**. Their profile shows **92% skill match** in FastAPI, Python, and MongoDB async query performance. This resolution will address 80% of active performance bottlenecks.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div
+      className="rounded-md p-4 mb-4"
+      style={{ border: "1px solid rgba(137,87,229,0.4)", boxShadow: "0 0 0 1px rgba(137,87,229,0.1)" }}
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-[#8957e5] text-sm leading-none">✦</span>
+        <span className="text-sm font-semibold text-[#e6edf3]">AI Summary</span>
+        <span className="text-xs text-[#7d8590] ml-1">powered by Gemini</span>
       </div>
+      {loading ? (
+        <div className="space-y-2">
+          <div className="h-3 bg-[#21262d] rounded animate-pulse w-full" />
+          <div className="h-3 bg-[#21262d] rounded animate-pulse w-4/5" />
+          <div className="h-3 bg-[#21262d] rounded animate-pulse w-3/5" />
+        </div>
+      ) : (
+        <>
+          <p className="text-[#7d8590] text-sm leading-relaxed whitespace-pre-wrap">{summary}</p>
+          <button className="text-[#58a6ff] text-xs mt-3 hover:underline">View Full Analysis →</button>
+        </>
+      )}
     </div>
-  );
+  )
 }

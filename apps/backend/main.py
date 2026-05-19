@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
 from services.database import ping_db, db
 from services import social, users
+from core.gemini import get_or_generate_summary, score_issue_impact, generate_developer_dossier
 from pydantic import BaseModel
 import os
 
@@ -84,4 +85,19 @@ async def get_skills(username: str):
 async def sync_user(data: dict):
     skills = await users.sync_github_user(db, data["token"], data["username"])
     return {"skills": skills}
+
+@app.get("/ai/repo-summary")
+async def repo_summary(repo: str, description: str = "", language: str = "", topics: str = ""):
+    summary = await get_or_generate_summary(db, repo, description, topics.split(","), language)
+    return {"summary": summary}
+
+@app.get("/ai/issue-score")
+async def issue_score(issue: str, repo: str):
+    return await score_issue_impact(issue, repo)
+
+@app.post("/ai/developer-dossier")
+async def developer_dossier(data: dict):
+    dossier = await generate_developer_dossier(data["username"], data.get("skills", []), data.get("top_repos", []))
+    return {"dossier": dossier}
+
 

@@ -4,6 +4,7 @@ import React from 'react';
 import { MessageSquare, AlertCircle } from 'lucide-react';
 import SkillBadge from '../shared/SkillBadge';
 import ImpactBar from '../shared/ImpactBar';
+import { useState, useEffect } from 'react';
 
 export interface Issue {
   id: number;
@@ -19,9 +20,30 @@ export interface Issue {
 
 interface IssueRowProps {
   issue: Issue;
+  repoFullName?: string;
 }
 
-export default function IssueRow({ issue }: IssueRowProps) {
+export default function IssueRow({ issue, repoFullName }: IssueRowProps) {
+  const [impact, setImpact] = useState({
+    score: issue.impactScore || 50,
+    level: issue.impactLevel || 'Med',
+    reason: ''
+  });
+
+  useEffect(() => {
+    if (repoFullName) {
+      const params = new URLSearchParams({ issue: issue.title, repo: repoFullName });
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/ai/issue-score?${params}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.score) {
+            setImpact({ score: d.score, level: d.level, reason: d.reason });
+          }
+        })
+        .catch(console.error);
+    }
+  }, [issue.title, repoFullName]);
+
   return (
     <div className="p-4 bg-gh-surface border-b border-gh-border hover:bg-gh-surface2/40 transition-colors flex items-start gap-3">
       <AlertCircle className="w-5 h-5 text-gh-green shrink-0 mt-0.5" />
@@ -56,7 +78,10 @@ export default function IssueRow({ issue }: IssueRowProps) {
             </div>
           )}
 
-          <ImpactBar impactScore={issue.impactScore} impactLevel={issue.impactLevel} />
+          <div className="flex flex-col gap-2 w-full max-w-sm">
+            <ImpactBar impactScore={impact.score} impactLevel={impact.level} />
+            {impact.reason && <span className="text-[10px] text-gh-muted">{impact.reason}</span>}
+          </div>
         </div>
       </div>
 

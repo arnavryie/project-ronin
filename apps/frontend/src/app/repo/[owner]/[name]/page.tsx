@@ -117,7 +117,7 @@ export default async function RepoDetailPage({ params }: { params: Promise<{ own
                   <div className="p-8 text-center text-gh-muted text-sm">No open issues found.</div>
                 ) : (
                   repo.issues.map((issue: any) => (
-                    <IssueRow key={issue.id} issue={issue} />
+                    <IssueRow key={issue.id} issue={issue} repoFullName={`${repo.owner}/${repo.name}`} />
                   ))
                 )}
               </TabsContent>
@@ -167,7 +167,12 @@ export default async function RepoDetailPage({ params }: { params: Promise<{ own
           </div>
 
           {/* AI Insights Panel */}
-          <AIInsightPanel />
+          <AIInsightPanel 
+            repoFullName={`${repo.owner}/${repo.name}`}
+            description={repo.description || ""}
+            language={repo.language || ""}
+            topics={repo.topics || []}
+          />
         </div>
       </div>
     </div>

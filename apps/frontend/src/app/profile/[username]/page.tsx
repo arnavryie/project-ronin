@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Users, MapPin, Star, BookOpen, BrainCircuit, Globe, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { FollowButton } from '@/components/profile/FollowButton';
+import { DeveloperDossier } from '@/components/profile/DeveloperDossier';
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -190,27 +191,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                 </div>
               </TabsContent>
 
-              <TabsContent value="dossier" className="p-5 bg-gh-surface border border-gh-border rounded-md flex flex-col gap-4">
-                <div className="border-b border-gh-border/60 pb-3 flex items-center gap-2 select-none">
-                  <BrainCircuit className="w-5 h-5 text-gh-purple animate-pulse" />
-                  <h3 className="text-sm font-bold text-white tracking-tight">AI Platform Analysis Dossier</h3>
-                </div>
-
-                <div className="flex flex-col gap-4 leading-relaxed">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-white">1. Developer Intelligence Persona</span>
-                    <p className="text-[11px] text-gh-muted">
-                      {user.bio || `@${user.username} is a GitHub developer with ${user.publicRepos} public repositories. Known for expertise in ${topLanguages.slice(0, 3).join(", ") || "various technologies"}.`}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-white">2. Open Task Skill Mapping</span>
-                    <p className="text-[11px] text-gh-muted">
-                      Core stack: {topLanguages.join(", ") || "Not enough data"}. Connect your Gemini AI integration (Phase 5) for a full developer dossier analysis.
-                    </p>
-                  </div>
-                </div>
+              <TabsContent value="dossier" className="mt-0 outline-none border-none">
+                <DeveloperDossier 
+                  username={user.username} 
+                  skills={topLanguages} 
+                  topRepos={repos.map(r => r.name)} 
+                />
               </TabsContent>
             </div>
           </Tabs>
