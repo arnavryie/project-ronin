@@ -15,6 +15,14 @@ export default async function CommunitiesPage() {
 
   return (
     <div className="p-6 max-w-[1000px] mx-auto flex flex-col gap-6">
+      <style dangerouslySetInnerHTML={{ __html: communities.map((comm: any) => `
+        .comm-card-${comm.slug} {
+          border-left-color: ${comm.color || '#58a6ff'} !important;
+        }
+        .comm-tag-${comm.slug} {
+          color: ${comm.color || '#58a6ff'} !important;
+        }
+      `).join('\n') }} />
       <div className="border-b border-gh-border pb-4">
         <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
           <Award className="w-5 h-5 text-gh-blue" />
@@ -27,8 +35,7 @@ export default async function CommunitiesPage() {
         {communities.map((comm: any) => (
           <div
             key={comm.slug}
-            className="p-5 bg-gh-surface border border-gh-border border-l-[3px] border-l-[var(--comm-color)] rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4"
-            style={{ '--comm-color': comm.color } as React.CSSProperties}
+            className={`p-5 bg-gh-surface border border-gh-border border-l-[3px] comm-card-${comm.slug} rounded-md hover:border-gh-blue transition-colors flex flex-col gap-4`}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -59,8 +66,7 @@ export default async function CommunitiesPage() {
             <div className="flex items-center gap-2 text-xs text-gh-muted pt-3 border-t border-gh-border/40 mt-auto justify-between">
               <div className="flex items-center gap-2">
                 <span 
-                  className="px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono text-[var(--comm-color)]" 
-                  style={{ '--comm-color': comm.color } as React.CSSProperties}
+                  className={`px-2 py-0.5 bg-gh-bg border border-gh-border rounded-full font-mono comm-tag-${comm.slug}`} 
                 >
                   #{comm.github_topic}
                 </span>

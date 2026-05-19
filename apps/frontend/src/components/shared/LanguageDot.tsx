@@ -7,12 +7,15 @@ interface LanguageDotProps {
 
 export default function LanguageDot({ language, color }: LanguageDotProps) {
   const dotColor = color || '#8b949e';
+  const colorClass = `lang-dot-${dotColor.replace('#', '')}`;
   return (
     <div className="flex items-center gap-1.5 inline-flex">
-      <span 
-        className="w-3 h-3 rounded-full inline-block shrink-0 bg-[var(--dot-color)]" 
-        style={{ '--dot-color': dotColor } as React.CSSProperties}
-      />
+      <style dangerouslySetInnerHTML={{ __html: `
+        .${colorClass} {
+          background-color: ${dotColor} !important;
+        }
+      ` }} />
+      <span className={`w-3 h-3 rounded-full inline-block shrink-0 ${colorClass}`} />
       <span className="text-sm text-gh-muted">{language}</span>
     </div>
   );

@@ -18,19 +18,21 @@ export default function ImpactBar({ impactScore, impactLevel }: ImpactBarProps) 
     bgColor = 'bg-gh-orange';
   }
 
+  const scoreClass = `impact-bar-fill-${impactScore}`;
+
   return (
     <div className="flex flex-col gap-1 w-full max-w-[200px]">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .${scoreClass} {
+          width: ${impactScore}% !important;
+        }
+      ` }} />
       <div className="flex justify-between items-center text-xs">
         <span className="text-gh-muted font-medium">Impact Score</span>
         <span className={`font-semibold ${textColor}`}>{impactLevel} ({impactScore}%)</span>
       </div>
       <div className="w-full bg-[#21262d] h-1.5 rounded-full overflow-hidden">
-        <div 
-          className={`h-full rounded-full transition-all duration-300 ${bgColor}`}
-          style={{ 
-            width: `${impactScore}%`,
-          }}
-        />
+        <div className={`h-full rounded-full transition-all duration-300 ${bgColor} ${scoreClass}`} />
       </div>
     </div>
   );
