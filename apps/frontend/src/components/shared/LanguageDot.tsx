@@ -1,0 +1,22 @@
+import React from 'react';
+
+interface LanguageDotProps {
+  language: string;
+  color?: string;
+}
+
+export default function LanguageDot({ language, color }: LanguageDotProps) {
+  const dotColor = color || '#8b949e';
+  const colorClass = `lang-dot-${dotColor.replace('#', '')}`;
+  return (
+    <div className="flex items-center gap-1.5 inline-flex">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .${colorClass} {
+          background-color: ${dotColor} !important;
+        }
+      ` }} />
+      <span className={`w-3 h-3 rounded-full inline-block shrink-0 ${colorClass}`} />
+      <span className="text-sm text-gh-muted">{language}</span>
+    </div>
+  );
+}
