@@ -13,7 +13,7 @@ export function AIInsightPanel({ repoFullName, description, language, topics }: 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
     const params = new URLSearchParams({ repo: repoFullName, description, language, topics: topics.join(",") })
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 5000)

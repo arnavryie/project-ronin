@@ -10,7 +10,7 @@ export function SocialFeed() {
   const [topPost, setTopPost] = useState<Post | null>(null)
 
   const fetchPosts = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
     try {
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 3000)
@@ -30,7 +30,7 @@ export function SocialFeed() {
     const interval = setInterval(fetchPosts, 10000)
     
     // Fetch top post of the week
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
     fetch(`${apiUrl}/posts?limit=50`)
       .then(r => r.json())
       .then((data: Post[]) => {

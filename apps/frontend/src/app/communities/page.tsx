@@ -25,7 +25,7 @@ const FALLBACK_COMMUNITIES: Community[] = [
 ]
 
 async function getCommunities(): Promise<Community[]> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 2000)

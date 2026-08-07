@@ -33,7 +33,7 @@ export default function IssueRow({ issue, repoFullName }: IssueRowProps) {
 
   useEffect(() => {
     if (!repoFullName) return;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
     const params = new URLSearchParams({ issue: issue.title, repo: repoFullName });
     fetch(`${apiUrl}/ai/issue-score?${params}`)
       .then(r => r.ok ? r.json() : null)

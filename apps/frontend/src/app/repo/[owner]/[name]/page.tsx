@@ -24,7 +24,7 @@ export default async function RepoDetailPage({ params }: { params: Promise<{ own
   }
 
   // Score the top 5 open issues with Gemini (cached in Mongo + Next)
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
   if (repo?.issues?.length) {
     const top = repo.issues.slice(0, 5);
     const scored = await Promise.all(

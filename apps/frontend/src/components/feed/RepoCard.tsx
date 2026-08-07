@@ -78,7 +78,7 @@ export default function RepoCard({ repo, userSkills = [] }: RepoCardProps) {
     const newState = !bookmarked
     setBookmarked(newState)
     toast(newState ? "🔖 Saved to bookmarks" : "Removed from bookmarks")
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
     const userId = session?.user?.email || "anonymous"
     try {
       if (newState) {

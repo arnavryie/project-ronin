@@ -13,7 +13,7 @@ export function DeveloperDossier({ username, skills, topRepos }: DeveloperDossie
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/ai/developer-dossier`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "/api"}/ai/developer-dossier`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, skills, top_repos: topRepos })

@@ -38,7 +38,7 @@ export default async function CommunitySlugPage({ params }: { params: Promise<{ 
 
   if (session?.user?.name) {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
       const res = await fetch(`${apiUrl}/users/${session.user.name}/skills`, { next: { revalidate: 300 } });
       if (res.ok) {
         const data = await res.json();

@@ -9,7 +9,7 @@ import { auth } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function FollowingPage() {
   const session = await auth();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
   
   let followingUsers: any[] = [];
   let communities: any[] = [];

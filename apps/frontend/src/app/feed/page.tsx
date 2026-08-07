@@ -33,7 +33,7 @@ export default async function FeedPage({
   const githubLogin = (session as any)?.githubLogin;
 
   if (githubLogin) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
     try {
       const res = await fetch(`${apiUrl}/users/${githubLogin}/skills`, { next: { revalidate: 300 } });
       if (res.ok) {
@@ -58,7 +58,7 @@ export default async function FeedPage({
 
   // Seed embeddings for current trending repos (fire and forget — grows the corpus)
   if (repos.length > 0) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
     fetch(`${apiUrl}/ai/index-repos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -76,7 +76,7 @@ export default async function FeedPage({
   let recommendations: any[] = [];
   if (githubLogin) {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
       const recRes = await fetch(`${apiUrl}/recommendations/${githubLogin}`, { cache: "no-store" });
       if (recRes.ok) {
         const recData = await recRes.json();

@@ -31,7 +31,7 @@ export default async function TrendingPage({
 
   if (githubLogin) {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
       const res = await fetch(`${apiUrl}/users/${githubLogin}/skills`, { next: { revalidate: 300 } });
       if (res.ok) {
         const data = await res.json();

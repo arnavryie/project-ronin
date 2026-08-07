@@ -12,7 +12,7 @@ export default function BookmarksPage() {
 
   useEffect(() => {
     if (!session?.user?.email) { setLoading(false); return }
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
     fetch(`${apiUrl}/bookmarks/${session.user.email}`)
       .then(r => r.json())
       .then(data => setBookmarks(Array.isArray(data) ? data : []))
